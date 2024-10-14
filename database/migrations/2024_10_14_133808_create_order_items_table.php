@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('order_id'); // Внешний ключ для заказа
             $table->unsignedBigInteger('product_id'); // Внешний ключ для продукта
             $table->integer('quantity');
-            $table->decimal('total_price', 8, 2);
+            $table->decimal('price', 8, 2); // Цена продукта на момент заказа
             $table->timestamps();
 
-            // Внешний ключ
+            // Внешние ключи
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_items');
     }
 };
