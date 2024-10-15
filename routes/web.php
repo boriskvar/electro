@@ -6,25 +6,13 @@ return view('welcome');
  */
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-// Маршрут для главной страницы (например, Home)
-Route::get('/', function () {
-    return view('home'); // Отображает главную страницу магазина
-})->name('home');
-
-// Маршруты для работы с продуктами (CRUD)
-Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('products.index'); // Отображает список всех продуктов (READ)
-    Route::get('/create', [ProductController::class, 'create'])->name('products.create'); // Показывает форму для добавления нового продукта (CREATE)
-    Route::post('/', [ProductController::class, 'store'])->name('products.store'); // Обрабатывает запрос на создание продукта (CREATE)
-    Route::get('/{id}', [ProductController::class, 'show'])->name('products.show'); // Отображает детали конкретного продукта (READ)
-    Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Показывает форму для редактирования продукта (UPDATE)
-    Route::put('/{id}', [ProductController::class, 'update'])->name('products.update'); // Обрабатывает запрос на обновление продукта (UPDATE)
-    Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy'); // Удаляет продукт (DELETE)
-});
+// Маршрут для главной страницы
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Маршруты для работы с категориями (CRUD)
 Route::prefix('categories')->group(function () {
@@ -37,6 +25,17 @@ Route::prefix('categories')->group(function () {
     Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy'); // Удаляет категорию (DELETE)
 });
 
+// Маршруты для работы с продуктами (CRUD)
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('products.index'); // Отображает список всех продуктов (READ)
+    Route::get('/create', [ProductController::class, 'create'])->name('products.create'); // Показывает форму для добавления нового продукта (CREATE)
+    Route::post('/', [ProductController::class, 'store'])->name('products.store'); // Обрабатывает запрос на создание продукта (CREATE)
+    Route::get('/{id}', [ProductController::class, 'show'])->name('products.show'); // Отображает детали конкретного продукта (READ)
+    Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit'); // Показывает форму для редактирования продукта (UPDATE)
+    Route::put('/{id}', [ProductController::class, 'update'])->name('products.update'); // Обрабатывает запрос на обновление продукта (UPDATE)
+    Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy'); // Удаляет продукт (DELETE)
+});
+
 // Маршруты для работы с заказами (CRUD)
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
@@ -47,3 +46,19 @@ Route::prefix('orders')->group(function () {
     Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
     Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
 });
+
+Route::prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
+    Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
+    Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
+    Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
+});
+
+Route::prefix('reviews')->group(function () {
+    Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
+    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
+    Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
+    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
+});
+
+//Auth::routes();

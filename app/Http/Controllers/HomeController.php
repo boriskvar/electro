@@ -2,28 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
+use App\Models\Category;
 
 class HomeController extends Controller
 {
-    /**
-     * Отображает главную страницу с Vue.js компонентом.
-     *
-     * @return \Illuminate\View\View
-     */
     public function index()
     {
-        return view('home');
+        $categories = Category::all();
+        return view('home', /*compact('featuredProducts')*/);
     }
 
-    /**
-     * Возвращает данные комментариев для использования в Vue.js.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function comments()
-    {
-        $comments = Comment::all();
-        return response()->json($comments);
-    }
 }

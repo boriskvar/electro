@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +10,24 @@ class Product extends Model
     use HasFactory;
 
     // Разрешаем массовое заполнение этих полей
-    protected $fillable = ['name', 'description', 'price', 'category_id'];
+    protected $fillable = [
+        'name',
+        'slug', // Уникальный slug для SEO
+        'description',
+        'details', // Поле для детальной информации
+        'price',
+        'old_price', // Старая цена (если есть скидка)
+        'in_stock', // Есть в наличии или нет
+        'rating', // Средний рейтинг
+        'reviews_count', // Количество отзывов
+        'views_count', // Количество просмотров
+        'images', // Массив изображений
+        'colors', // Возможные цвета товара
+        'sizes', // Возможные размеры товара
+        'qty', // Количество товаров на складе
+        'category_id', // Внешний ключ для категории
+        'brand_id', // Внешний ключ для бренда (необязательно)
+    ];
 
     // Связь с категорией
     public function category()
