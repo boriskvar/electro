@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('parent_id')->nullable(); // Внешний ключ для родительской категории
+            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
             $table->string('name');
             $table->string('slug')->unique(); // Уникальный slug
+            $table->text('description')->nullable(); // Поле для описания
             $table->timestamps();
         });
     }
