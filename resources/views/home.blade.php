@@ -8,6 +8,9 @@
     <div class="container">
         @yield('categories')
     </div>
+    <div class="container">
+        @yield('products')
+    </div>
     <!-- /SECTION -->
 </div>
 @endsection
