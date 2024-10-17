@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -26,13 +27,20 @@ class ProductController extends Controller
             $brands = Brand::all(); // Получаем все бренды
         }
         $categories = Category::all(); // Получаем все категории
-        //$brands = Brand::all(); // Получаем все бренды
+        $brands = Brand::all(); // Получаем все бренды
         return view('products.create', compact('categories', 'brands')); // Передаем переменную в представление
     }
 
     // Сохранить новый продукт
     public function store(Request $request)
     {
+        //dd($request->all());
+        // Удаляем null значения из массивов
+        $request->merge([
+            'colors' => array_filter($request->colors),
+            'sizes' => array_filter($request->sizes),
+        ]);
+
         // Валидация данных
         $request->validate([
             'name' => 'required|string|max:255',
@@ -45,21 +53,28 @@ class ProductController extends Controller
             'rating' => 'nullable|numeric|min:0|max:5',
             'reviews_count' => 'nullable|integer|min:0',
             'views_count' => 'nullable|integer|min:0',
-            'colors' => 'nullable|array',
-            'sizes' => 'nullable|array',
+            'colors' => 'required|array',
+            'colors.*' => 'required|string', // Обязательное поле для каждого элемента
+            'sizes' => 'required|array',
+            'sizes.*' => 'required|string', // Обязательное поле для каждого элемента
             'qty' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id', // Необязательный внешний ключ
-            'images' => 'nullable|array', // Валидация для массива изображений
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Массив изображений с валидацией
+            'brand_id' => 'nullable|exists:brands,id',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         // Собираем данные
         $data = $request->all();
 
-// Преобразование и фильтрация массивов
-        $data['colors'] = json_encode(array_filter($request->colors));
-        $data['sizes'] = json_encode(array_filter($request->sizes));
+        // Преобразование массивов в JSON перед сохранением
+        $data['colors'] = json_encode($request->colors);
+        $data['sizes'] = json_encode($request->sizes);
+
+        //dd($request->all());
+        // Отладка: выводим массивы colors и sizes
+        //dd($request->colors, $request->sizes);
+        //dd($data);
 
         // Обработка загрузки изображений
         if ($request->hasFile('images')) {
@@ -84,6 +99,7 @@ class ProductController extends Controller
     // Показать один продукт
     public function show(Product $product)
     {
+        //dd($product->images); //"["img/OzxpRcIK9jxYJOuouGZvYqmfzoxsjnM3Ru4rIaQu.png"]"
         return view('products.show', compact('product'));
     }
 
@@ -122,7 +138,7 @@ class ProductController extends Controller
         // Собираем данные из запроса
         $data = $request->all();
 
-        // Преобразуйте массивы в JSON
+        // Преобразуем массивы в JSON
         $data['colors'] = json_encode($request->colors);
         $data['sizes'] = json_encode($request->sizes);
 
@@ -130,8 +146,8 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
-                $path = $image->store('img', 'public'); // Сохраняем в папку public/img
-                $imagePaths[] = str_replace('\\', '/', $path); // Приводим к правильному виду
+                $path = $image->store('img', 'public'); // Сохранение изображения в storage/app/public/img
+                $imagePaths[] = $path; // Сохраняем путь
             }
             $data['images'] = json_encode($imagePaths); // Преобразуем массив путей в JSON
         } else {
@@ -141,13 +157,25 @@ class ProductController extends Controller
         // Обновляем продукт
         $product->update($data);
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        return redirect()->route('products.index')->with('success', 'Продукт обновлен успешно');
     }
 
     // Удалить продукт
     public function destroy(Product $product)
     {
+        // Удаляем связанные изображения, если они есть
+        if ($product->images) {
+            $imagePaths = json_decode($product->images); // Декодируем пути к изображениям
+            foreach ($imagePaths as $imagePath) {
+                // Удаляем файл из файловой системы
+                Storage::disk('public')->delete($imagePath);
+            }
+        }
+
+        // Удаляем продукт
         $product->delete();
+
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
+
 }

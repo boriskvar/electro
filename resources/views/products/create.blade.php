@@ -56,7 +56,8 @@
 
         <div class="form-group">
             <label for="images">Загрузить изображения:</label>
-            <input type="file" class="form-control" id="images" name="images[]" multiple>
+            {{-- <input type="file" class="form-control" id="images" name="images[]" multiple> --}}
+            <input type="file" class="form-control" id="images" name="images[]" multiple onchange="previewImages()">
         </div>
 
 
@@ -108,4 +109,28 @@
         <a href="{{ route('products.index') }}" class="btn btn-warning">Назад к списку товаров</a>
     </form>
 </div>
+<script>
+    function previewImages() {
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых изображений
+        const files = document.getElementById('images').files; // Получаем загруженные файлы
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result; // Устанавливаем источник изображения
+                img.classList.add('img-thumbnail', 'me-2'); // Добавляем классы для стилизации
+                img.style.maxWidth = '100px'; // Ограничиваем максимальную ширину
+                img.style.maxHeight = '100px'; // Ограничиваем максимальную высоту
+                previewContainer.appendChild(img); // Добавляем изображение в контейнер
+            }
+
+            reader.readAsDataURL(file); // Читаем файл как Data URL
+        }
+    }
+
+</script>
 @endsection

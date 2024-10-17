@@ -6,8 +6,13 @@
     <h1>{{ $product->name }}</h1>
 
     <div class="product-details">
-        @if(json_decode($product->images) && file_exists(storage_path('app/public/img/' . json_decode($product->images)[0])))
-        <img src="{{ asset('storage/img/' . json_decode($product->images)[0]) }}" alt="{{ $product->name }}" class="img-fluid">
+        @php
+        $images = json_decode($product->images, true);
+        @endphp
+
+
+        @if($images && isset($images[0]) && file_exists(public_path('storage/img/' . basename($images[0]))))
+        <img src="{{ asset('storage/img/' . basename($images[0])) }}" alt="{{ $product->name }}" class="img-fluid" style="max-width: 100px;">
         @else
         <p>Изображение недоступно</p>
         @endif

@@ -12,7 +12,6 @@
         @csrf
         @method('PUT')
         <!-- Указываем метод PUT для обновления -->
-        <!-- Используем метод PUT для обновления -->
 
         <div class="form-group">
             <label for="name">Название товара:</label>
@@ -60,11 +59,11 @@
 
         <div class="form-group">
             <label for="images">Загрузить изображения:</label>
-            {{-- <input type="file" class="form-control" id="images" name="images[]" multiple> --}}
             <input type="file" class="form-control" id="images" name="images[]" multiple onchange="previewImages()">
         </div>
 
-        <div id="image-preview" class="mb-3"></div> <!-- Контейнер для предварительного просмотра изображений -->
+        <!-- предварительный просмотр изображений -->
+        <div id="image-preview" class="mb-3"></div>
 
         <div class="form-group">
             <label for="colors">Цвета:</label>
@@ -119,12 +118,13 @@
         <a href="{{ route('products.index') }}" class="btn btn-warning">Назад к списку товаров</a>
     </form>
 </div>
+
 <script>
     function previewImages() {
-        const previewContainer = document.getElementById('image-preview');
-        previewContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых изображений
-        const files = document.getElementById('images').files; // Получаем загруженные файлы
+        const preview = document.getElementById('image-preview');
+        preview.innerHTML = ''; // Очищаем предыдущий предварительный просмотр
 
+        const files = document.getElementById('images').files; // Получаем файлы из поля ввода
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const reader = new FileReader();
@@ -132,15 +132,16 @@
             reader.onload = function(e) {
                 const img = document.createElement('img');
                 img.src = e.target.result; // Устанавливаем источник изображения
-                img.classList.add('img-thumbnail', 'me-2'); // Добавляем классы для стилизации
-                img.style.maxWidth = '100px'; // Ограничиваем максимальную ширину
-                img.style.maxHeight = '100px'; // Ограничиваем максимальную высоту
-                previewContainer.appendChild(img); // Добавляем изображение в контейнер
+                img.classList.add('img-thumbnail');
+                img.style.maxWidth = '100px'; // Ограничиваем ширину изображения
+                img.style.maxHeight = '100px'; // Ограничиваем высоту изображения
+                preview.appendChild(img); // Добавляем изображение в контейнер
             }
 
-            reader.readAsDataURL(file); // Читаем файл как Data URL
+            reader.readAsDataURL(file); // Читаем файл как URL
         }
     }
 
 </script>
+
 @endsection

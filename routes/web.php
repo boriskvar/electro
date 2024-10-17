@@ -7,7 +7,6 @@ return view('welcome');
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,28 +37,28 @@ Route::prefix('products')->group(function () {
 });
 
 // Маршруты для работы с заказами (CRUD)
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
-    Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает форму для создания нового заказа (CREATE)
-    Route::post('/', [OrderController::class, 'store'])->name('orders.store'); // Обрабатывает запрос на создание заказа (CREATE)
-    Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
-    Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает форму для редактирования заказа (UPDATE)
-    Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
-    Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
-});
+/*Route::prefix('orders')->group(function () {
+Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
+Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает форму для создания нового заказа (CREATE)
+Route::post('/', [OrderController::class, 'store'])->name('orders.store'); // Обрабатывает запрос на создание заказа (CREATE)
+Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
+Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает форму для редактирования заказа (UPDATE)
+Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
+Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
+});*/
 
-Route::prefix('cart')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
-    Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
-    Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
-    Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
-});
+/*Route::prefix('cart')->group(function () {
+Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
+Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
+Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
+Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
+});*/
 
-Route::prefix('reviews')->group(function () {
-    Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
-    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
-    Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
-    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
-});
+/*Route::prefix('reviews')->group(function () {
+Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
+Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
+Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
+Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
+});*/
 
 //Auth::routes();
