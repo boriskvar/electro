@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); // Внешний ключ для пользователя
             $table->decimal('total_price', 8, 2);
+            $table->string('order_number')->unique(); // Уникальный номер заказа
             $table->string('status')->default('pending'); // Статус заказа
             $table->string('shipping_address')->nullable(); // Адрес доставки
             $table->dateTime('order_date')->nullable(); // Дата создания заказа

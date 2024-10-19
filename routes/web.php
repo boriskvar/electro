@@ -8,6 +8,7 @@ return view('welcome');
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,12 +51,12 @@ Route::prefix('brands')->group(function () {
 // Маршруты для работы с заказами (CRUD)
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
-    Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает форму для создания нового заказа (CREATE)
+    Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает ФОРМУ для создания нового заказа (CREATE)
     Route::post('/', [OrderController::class, 'store'])->name('orders.store'); // Обрабатывает запрос на создание заказа (CREATE)
-    Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
-    Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает форму для редактирования заказа (UPDATE)
-    Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
-    Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
+    Route::get('/{order}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
+    Route::get('/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает ФОРМУ для редактирования заказа (UPDATE)
+    Route::put('/{order}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
+    Route::delete('/{order}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
 });
 
 /*Route::prefix('cart')->group(function () {

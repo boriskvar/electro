@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id'); // Внешний ключ для продукта
             $table->integer('quantity');
             $table->decimal('price', 8, 2); // Цена продукта на момент заказа
+            $table->string('image')->nullable(); // Путь к изображению товара
             $table->timestamps();
 
             // Внешние ключи
