@@ -62,6 +62,10 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
             'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'is_top_selling' => 'required|boolean',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'is_new' => 'required|boolean',
+            'position' => 'nullable|integer|min:0',
         ]);
 
         // Собираем данные
@@ -118,7 +122,7 @@ class ProductController extends Controller
         // Валидация входящих данных
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug,' . $product->id,
+            'slug' => 'required|string|max:255|unique:products,slug,' . $product->id, // уникальность, игнорируя текущий продукт
             'description' => 'nullable|string',
             'details' => 'nullable|string',
             'price' => 'required|numeric',
@@ -133,6 +137,10 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Валидация для изображений
+            'is_top_selling' => 'required|boolean',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'is_new' => 'required|boolean',
+            'position' => 'nullable|integer|min:0',
         ]);
 
         // Собираем данные из запроса

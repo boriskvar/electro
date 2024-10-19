@@ -56,7 +56,6 @@
 
         <div class="form-group">
             <label for="images">Загрузить изображения:</label>
-            {{-- <input type="file" class="form-control" id="images" name="images[]" multiple> --}}
             <input type="file" class="form-control" id="images" name="images[]" multiple onchange="previewImages()">
         </div>
 
@@ -87,10 +86,15 @@
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                 @endforeach
                 @else
-                <option value="">Нет доступных категорий</option>
+                <option value="">Сначала создайте хотя бы одну категорию, чтобы добавить продукт.</option>
                 @endif
             </select>
         </div>
+        @if ($categories->isEmpty())
+        <div class="alert alert-warning mt-2">
+            Сначала создайте хотя бы одну категорию, чтобы добавить продукт.
+        </div>
+        @endif
 
         <div class="form-group">
             <label for="brand_id">Бренд (необязательно):</label>
@@ -105,6 +109,33 @@
                 @endif
             </select>
         </div>
+
+        <div class="form-group">
+            <label for="is_top_selling">Топ продаж:</label>
+            <select class="form-control" id="is_top_selling" name="is_top_selling" required>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="discount_percentage">Скидка (%):</label>
+            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" step="0.01" min="0" max="100" placeholder="Введите процент скидки" value="{{ old('discount_percentage') }}">
+        </div>
+
+        <div class="form-group">
+            <label for="is_new">Новинка:</label>
+            <select class="form-control" id="is_new" name="is_new" required>
+                <option value="1">Да</option>
+                <option value="0">Нет</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="position">Позиция:</label>
+            <input type="number" class="form-control" id="position" name="position" placeholder="Введите позицию товара" value="{{ old('position') }}">
+        </div>
+
         <button type="submit" class="btn btn-primary">Создать товар</button>
         <a href="{{ route('products.index') }}" class="btn btn-warning">Назад к списку товаров</a>
     </form>

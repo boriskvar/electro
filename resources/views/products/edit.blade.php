@@ -114,6 +114,32 @@
             </select>
         </div>
 
+        <div class="form-group">
+            <label for="is_top_selling">Топ продаж:</label>
+            <select class="form-control" id="is_top_selling" name="is_top_selling" required>
+                <option value="1" {{ $product->is_top_selling ? 'selected' : '' }}>Да</option>
+                <option value="0" {{ !$product->is_top_selling ? 'selected' : '' }}>Нет</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="discount_percentage">Скидка (%):</label>
+            <input type="number" class="form-control" id="discount_percentage" name="discount_percentage" step="0.01" min="0" max="100" placeholder="Введите процент скидки" value="{{ $product->discount_percentage }}">
+        </div>
+
+        <div class="form-group">
+            <label for="is_new">Новинка:</label>
+            <select class="form-control" id="is_new" name="is_new" required>
+                <option value="1" {{ $product->is_new ? 'selected' : '' }}>Да</option>
+                <option value="0" {{ !$product->is_new ? 'selected' : '' }}>Нет</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="position">Позиция:</label>
+            <input type="number" class="form-control" id="position" name="position" placeholder="Введите позицию товара" value="{{ $product->position }}">
+        </div>
+
         <button type="submit" class="btn btn-primary">Сохранить изменения</button>
         <a href="{{ route('products.index') }}" class="btn btn-warning">Назад к списку товаров</a>
     </form>

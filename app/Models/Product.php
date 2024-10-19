@@ -27,6 +27,11 @@ class Product extends Model
         'qty', // Количество товаров на складе
         'category_id', // Внешний ключ для категории
         'brand_id', // Внешний ключ для бренда (необязательно)
+        // Новые поля
+        'is_top_selling',
+        'discount_percentage',
+        'is_new',
+        'position',
     ];
 
     // Связь с категорией
