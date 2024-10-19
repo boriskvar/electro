@@ -3,14 +3,16 @@
 @section('content')
 <div class="container">
     <h1>Добро пожаловать в наш магазин</h1>
-    <h2>Популярные товары</h2>
-    <!-- SECTION -->
+
     <div class="container">
+        <h2>Категории</h2>
         @yield('categories')
     </div>
+
     <div class="container">
+        <h2>Продукты</h2>
         @yield('products')
     </div>
-    <!-- /SECTION -->
+
 </div>
 @endsection

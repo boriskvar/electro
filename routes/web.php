@@ -5,6 +5,7 @@ return view('welcome');
 });
  */
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
@@ -36,16 +37,26 @@ Route::prefix('products')->group(function () {
     Route::delete('/{product}', [ProductController::class, 'destroy'])->name('products.destroy'); // Удаляет продукт (DELETE)
 });
 
+Route::prefix('brands')->group(function () {
+    Route::get('/', [BrandController::class, 'index'])->name('brands.index'); // Отображает список всех брендов (READ)
+    Route::get('/create', [BrandController::class, 'create'])->name('brands.create'); // Показывает форму для добавления нового бренда (CREATE)
+    Route::post('/', [BrandController::class, 'store'])->name('brands.store'); // Обрабатывает запрос на создание бренда (CREATE)
+    Route::get('/{brand}', [BrandController::class, 'show'])->name('brands.show'); // Отображает детали конкретного бренда (READ)
+    Route::get('/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit'); // Показывает форму для редактирования бренда (UPDATE)
+    Route::put('/{brand}', [BrandController::class, 'update'])->name('brands.update'); // Обрабатывает запрос на обновление бренда (UPDATE)
+    Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('brands.destroy'); // Удаляет бренд (DELETE)
+});
+
 // Маршруты для работы с заказами (CRUD)
-/*Route::prefix('orders')->group(function () {
-Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
-Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает форму для создания нового заказа (CREATE)
-Route::post('/', [OrderController::class, 'store'])->name('orders.store'); // Обрабатывает запрос на создание заказа (CREATE)
-Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
-Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает форму для редактирования заказа (UPDATE)
-Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
-Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
-});*/
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('orders.index'); // Отображает список всех заказов (READ)
+    Route::get('/create', [OrderController::class, 'create'])->name('orders.create'); // Показывает форму для создания нового заказа (CREATE)
+    Route::post('/', [OrderController::class, 'store'])->name('orders.store'); // Обрабатывает запрос на создание заказа (CREATE)
+    Route::get('/{id}', [OrderController::class, 'show'])->name('orders.show'); // Отображает детали конкретного заказа (READ)
+    Route::get('/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit'); // Показывает форму для редактирования заказа (UPDATE)
+    Route::put('/{id}', [OrderController::class, 'update'])->name('orders.update'); // Обрабатывает запрос на обновление заказа (UPDATE)
+    Route::delete('/{id}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
+});
 
 /*Route::prefix('cart')->group(function () {
 Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины

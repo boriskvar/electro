@@ -17,11 +17,17 @@ return new class extends Migration
             $table->decimal('total_price', 8, 2);
             $table->string('status')->default('pending'); // Статус заказа
             $table->string('shipping_address')->nullable(); // Адрес доставки
+            $table->dateTime('order_date')->nullable(); // Дата создания заказа
+            $table->dateTime('delivery_date')->nullable(); // Ожидаемая дата доставки
+            $table->string('payment_method')->nullable(); // Метод оплаты
+            $table->string('shipping_status')->nullable(); // Статус доставки
+            $table->decimal('discount', 8, 2)->nullable(); // Скидка или купон
             $table->timestamps();
 
             // Внешние ключи
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
     }
 
     /**

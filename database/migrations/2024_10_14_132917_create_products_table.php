@@ -29,6 +29,13 @@ return new class extends Migration
             $table->integer('qty')->default(0); // Количество товаров на складе
             $table->unsignedBigInteger('category_id'); // Внешний ключ для категории
             $table->unsignedBigInteger('brand_id')->nullable(); // Внешний ключ для бренда (необязательно)
+
+            // Новые поля
+            $table->boolean('is_top_selling')->default(false); // Лидер продаж
+            $table->decimal('discount_percentage', 5, 2)->nullable(); // Процент скидки
+            $table->boolean('is_new')->default(false); // Новинка
+            $table->unsignedInteger('position')->nullable(); // Позиция для сортировки
+
             $table->timestamps();
 
             // Внешние ключи
