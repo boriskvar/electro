@@ -35,4 +35,10 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class, 'order_items');
     }
+
+    // Добавляем нужные поля в $casts для автоматического преобразования в даты (После этого поля будут автоматически конвертироваться в объекты Carbon, и вы сможете использовать метод format:)
+    protected $casts = [
+        'order_date' => 'date',
+        'delivery_date' => 'date',
+    ];
 }

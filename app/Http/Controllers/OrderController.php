@@ -18,7 +18,19 @@ class OrderController extends Controller
     // Показать один заказ
     public function show(Order $order)
     {
-        return view('orders.show', compact('order'));
+        // Получаем всех пользователей для выпадающего списка
+        $users = User::all();
+
+        return view('orders.show', compact('order', 'users'));
+    }
+
+    // Показать форму для редактирования заказа
+    public function edit(Order $order)
+    {
+        // Получаем всех пользователей для выпадающего списка
+        $users = User::all();
+
+        return view('orders.edit', compact('order', 'users'));
     }
 
     // Показать форму для создания нового заказа
@@ -55,14 +67,32 @@ class OrderController extends Controller
     // Обновить существующий заказ
     public function update(Request $request, Order $order)
     {
-        $order->update($request->all());
-        return redirect()->route('orders.index')->with('success', 'Order updated successfully');
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'total_price' => 'required|numeric|min:0',
+            'status' => 'required|string',
+            'shipping_address' => 'nullable|string|max:255',
+            'order_date' => 'required|date',
+            'delivery_date' => 'nullable|date',
+            'payment_method' => 'required|string',
+            'shipping_status' => 'nullable|string',
+            'discount' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        $order->update($validated);
+
+        return redirect()->route('orders.index')->with('success', 'Заказ успешно обновлен');
     }
 
     // Удалить заказ
     public function destroy(Order $order)
     {
-        $order->delete();
-        return redirect()->route('orders.index')->with('success', 'Order deleted successfully');
+        try {
+            $order->delete();
+            return redirect()->route('orders.index')->with('success', 'Заказ успешно удален.');
+        } catch (\Exception $e) {
+            return redirect()->route('orders.index')->with('error', 'Ошибка при удалении заказа: ' . $e->getMessage());
+        }
     }
+
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,12 +60,22 @@ Route::prefix('orders')->group(function () {
     Route::delete('/{order}', [OrderController::class, 'destroy'])->name('orders.destroy'); // Удаляет заказ (DELETE)
 });
 
-/*Route::prefix('cart')->group(function () {
-Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
-Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
-Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
-Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
-});*/
+Route::prefix('order-items')->group(function () {
+    Route::get('/', [OrderItemController::class, 'index'])->name('order-items.index'); // Отображает список всех элементов заказов (READ)
+    Route::get('/create', [OrderItemController::class, 'create'])->name('order-items.create'); // Показывает ФОРМУ для создания нового элемента заказа (CREATE)
+    Route::post('/', [OrderItemController::class, 'store'])->name('order-items.store'); // Обрабатывает запрос на создание элемента заказа (CREATE)
+    Route::get('/{orderItem}', [OrderItemController::class, 'show'])->name('order-items.show'); // Отображает детали конкретного элемента заказа (READ)
+    Route::get('/{orderItem}/edit', [OrderItemController::class, 'edit'])->name('order-items.edit'); // Показывает ФОРМУ для редактирования элемента заказа (UPDATE)
+    Route::put('/{orderItem}', [OrderItemController::class, 'update'])->name('order-items.update'); // Обрабатывает запрос на обновление элемента заказа (UPDATE)
+    Route::delete('/{orderItem}', [OrderItemController::class, 'destroy'])->name('order-items.destroy'); // Удаляет элемент заказа (DELETE)
+});
+
+Route::prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
+    Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
+    Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
+    Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
+});
 
 /*Route::prefix('reviews')->group(function () {
 Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
