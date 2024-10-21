@@ -12,6 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 
 // Маршрут для главной страницы
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -70,12 +71,20 @@ Route::prefix('order-items')->group(function () {
     Route::delete('/{orderItem}', [OrderItemController::class, 'destroy'])->name('order-items.destroy'); // Удаляет элемент заказа (DELETE)
 });
 
+// Группировка маршрутов для корзины
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
     Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
     Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
     Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
 });
+
+// Маршруты для оформления заказа
+Route::prefix('checkout')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index'); // Показать страницу оформления заказа
+    Route::post('/', [CheckoutController::class, 'store'])->name('checkout.store'); // Обработать оформление заказа
+});
+
 
 /*Route::prefix('reviews')->group(function () {
 Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв

@@ -14,14 +14,16 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id'); // Внешний ключ для продукта
-            $table->string('author_name');
-            $table->string('email');
-            $table->integer('rating')->default(1); // Значение по умолчанию
-            $table->text('review_text')->nullable();
-            $table->timestamps(); // Автоматически создаст 'created_at' и 'updated_at'
+            $table->unsignedBigInteger('user_id')->nullable(); // Внешний ключ для пользователя, может быть null для анонимных
+            $table->string('author_name')->nullable(); // Имя автора, нужно для анонимных
+            $table->string('email')->nullable(); // Email автора, нужно для анонимных
+            $table->integer('rating')->default(1); // Рейтинг
+            $table->text('review_text')->nullable(); // Текст отзыва
+            $table->timestamps(); // Даты создания и обновления
 
-            // Внешний ключ
+            // Внешние ключи
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

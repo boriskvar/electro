@@ -3,14 +3,12 @@
 @section('content')
 
 <div class="container">
-    {{-- <h3>Название товара</h3> --}}
     <h1>{{ $product->name }}</h1>
 
     <div class="product-details">
         @php
         $images = json_decode($product->images, true);
         @endphp
-
 
         @if($images && isset($images[0]) && file_exists(public_path('storage/img/' . basename($images[0]))))
         <img src="{{ asset('storage/img/' . basename($images[0])) }}" alt="{{ $product->name }}" class="img-fluid" style="max-width: 100px;">
@@ -28,7 +26,7 @@
         <p>{{ $product->details }}</p>
 
         <h3>Цена</h3>
-        <p>${{ number_format($product->price, 2) }}</p> // используется number_format, чтобы отобразить цену с двумя знаками после запятой.
+        <p>${{ number_format($product->price, 2) }}</p>
 
         @if($product->old_price)
         <h3>Старая цена</h3>
@@ -46,7 +44,6 @@
 
         <h3>Количество просмотров</h3>
         <p>{{ $product->views_count }}</p>
-
 
         <h3>Цвета</h3>
         <p>{{ json_decode($product->colors) ? implode(', ', json_decode($product->colors)) : 'Нет' }}</p>
@@ -75,7 +72,29 @@
         <h3>Позиция</h3>
         <p>{{ $product->position }}</p>
 
+        <h3>Добавить в корзину</h3>
+        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+            @csrf
+            <label for="quantity">Количество:</label>
+            <input type="number" name="quantity" value="1" min="1" max="{{ $product->in_stock }}" class="form-control" style="width: 100px; display: inline-block;">
+            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+        </form>
     </div>
+
+    <h3>Отзывы</h3>
+    @if($product->reviews->isEmpty())
+    <p>Нет отзывов для этого продукта.</p>
+    @else
+    <ul>
+        @foreach($product->reviews as $review)
+        <li>
+            <strong>{{ $review->author_name }}:</strong>
+            <p>{{ $review->review_text }}</p>
+            <p>Рейтинг: {{ $review->rating }} / 5</p>
+        </li>
+        @endforeach
+    </ul>
+    @endif
 
     <a href="{{ route('products.index') }}" class="btn btn-primary">Назад к списку товаров</a>
 </div>

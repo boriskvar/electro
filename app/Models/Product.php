@@ -45,4 +45,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class, 'order_items');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'product_id', 'id'); // product_id — внешний ключ в таблице reviews
+    }
 }

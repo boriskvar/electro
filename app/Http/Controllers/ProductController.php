@@ -11,10 +11,37 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     // Вывод списка продуктов
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all(); // Получаем все продукты из базы данных
-        return view('products.index', compact('products')); // Возвращаем представление с переданными данными
+        // Определяем допустимые поля для сортировки
+        $allowedSortFields = ['popular', 'position', 'created_at', 'name']; // Добавьте другие поля по необходимости
+
+        // Получаем параметры сортировки и пагинации из запроса
+        $sort = $request->input('sort', 'position'); // Поле для сортировки, по умолчанию 'position'
+        $order = $request->input('order', 'asc'); // Порядок сортировки, по умолчанию 'asc'
+        $perPage = $request->input('per_page', 25); // Количество элементов на страницу, по умолчанию 25
+        $page = $request->input('page', 1); // Текущая страница
+
+        // Проверяем, является ли поле сортировки допустимым
+        if (!in_array($sort, $allowedSortFields)) {
+            $sort = 'position'; // По умолчанию сортируем по 'position' если поле недопустимо
+        }
+
+        // Выполняем запрос к базе данных с учетом отзывов и оценок
+        $products = Product::withCount('reviews') // Подсчитываем количество отзывов
+            ->withAvg('reviews', 'rating') // Вычисляем среднюю оценку
+            ->when($sort === 'popular', function ($query) use ($order) {
+                // Сортировка по популярности (количество отзывов и средняя оценка)
+                return $query->orderBy('reviews_count', $order)
+                    ->orderBy('reviews_avg_rating', $order);
+            }, function ($query) use ($sort, $order) {
+                // Сортировка по другим полям
+                return $query->orderBy($sort, $order);
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        // Возвращаем представление с переданными данными
+        return view('products.index', compact('products'));
     }
 
     // Показать форму для создания нового продукта
@@ -104,6 +131,9 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         //dd($product->images); //"["img/OzxpRcIK9jxYJOuouGZvYqmfzoxsjnM3Ru4rIaQu.png"]"
+        // Загружаем отзывы вместе с продуктом
+        $product->load('reviews'); // Загружаем связанные отзывы
+
         return view('products.show', compact('product'));
     }
 
@@ -185,5 +215,4 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
-
 }
