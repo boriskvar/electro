@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Создание деталей заказа</h1>
+    <h1>Добавление товаров в заказ</h1>
     <form action="{{ route('order-items.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -17,9 +17,9 @@
         </div>
 
         <div class="form-group">
-            <label for="product_id">Продукт:</label>
+            <label for="product_id">Товар:</label>
             <select class="form-control" id="product_id" name="product_id" required>
-                <option value="">Выберите продукт</option>
+                <option value="">Выберите товар</option>
                 @foreach ($products as $product)
                 <option value="{{ $product->id }}">{{ $product->name }} (Цена за единицу: {{ $product->price }})</option>
                 @endforeach
@@ -36,13 +36,8 @@
             <input type="number" class="form-control" id="price" name="price" step="0.01" required>
         </div>
 
-        <div class="form-group">
-            <label for="image">Изображение:</label>
-            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-        </div>
-
-        <button type="submit" class="btn btn-primary">Создать детали заказа</button>
-        <a href="{{ route('order-items.index') }}" class="btn btn-warning">Назад к списку деталей заказов</a>
+        <button type="submit" class="btn btn-primary">Создать объединенный заказ</button>
+        <a href="{{ route('order-items.index') }}" class="btn btn-warning">Назад к списку товаров заказов</a>
     </form>
 </div>
 @endsection

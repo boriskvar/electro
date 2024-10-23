@@ -22,6 +22,7 @@ class Order extends Model
         'payment_method',
         'shipping_status',
         'discount',
+        'order_notes'
     ];
 
     // Связь с пользователем
@@ -30,10 +31,10 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Связь с товарами через таблицу order_items
-    public function products()
+    // Связь с элементами заказа
+    public function orderItems()
     {
-        return $this->belongsToMany(Product::class, 'order_items');
+        return $this->hasMany(OrderItem::class);
     }
 
     // Добавляем нужные поля в $casts для автоматического преобразования в даты (После этого поля будут автоматически конвертироваться в объекты Carbon, и вы сможете использовать метод format:)

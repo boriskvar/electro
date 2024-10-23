@@ -14,7 +14,6 @@ class OrderItem extends Model
         'product_id',
         'quantity',
         'price',
-        'image',
     ];
 
     // Добавь связи с другими моделями, если нужно

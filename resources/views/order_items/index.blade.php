@@ -2,10 +2,8 @@
 
 @section('content')
 
-{{-- {{ dd($orderItems->toArray()) }} --}}
-
 <div class="container">
-    <h1>Список элементов заказов</h1>
+    <h1>Список товаров в заказе</h1>
 
     @if(session('success'))
     <div class="alert alert-success">
@@ -19,7 +17,7 @@
     </div>
     @endif
 
-    <a href="{{ route('order-items.create') }}" class="btn btn-primary">Добавить элементы заказа</a>
+    <a href="{{ route('order-items.create') }}" class="btn btn-primary mb-3">Добавить товар в заказ</a>
     <table class="table">
         <thead>
             <tr>
@@ -39,7 +37,7 @@
                 <td>{{ $orderItem->order->order_number }}</td>
                 <td>{{ $orderItem->product->name }}</td>
                 <td>{{ $orderItem->quantity }}</td>
-                <td>{{ $orderItem->price }}</td>
+                <td>{{ number_format($orderItem->price, 2, '.', '') }} ₴</td> <!-- Форматирование цены -->
                 <td>
                     @if($orderItem->image && file_exists(public_path('storage/' . $orderItem->image)))
                     <img src="{{ asset('storage/' . $orderItem->image) }}" alt="Изображение товара" class="img-fluid" style="max-width: 50px;">
@@ -61,5 +59,9 @@
             @endforeach
         </tbody>
     </table>
+
+    @if($orderItems->isEmpty())
+    <div class="alert alert-warning">Нет товаров в заказе.</div> <!-- Сообщение, если нет элементов -->
+    @endif
 </div>
 @endsection

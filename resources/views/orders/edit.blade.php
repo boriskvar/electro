@@ -42,22 +42,32 @@
             </select>
         </div>
 
-        <!-- Адрес доставки -->
-        <div class="form-group">
-            <label for="shipping_address">Адрес доставки:</label>
-            <input type="text" class="form-control" id="shipping_address" name="shipping_address" value="{{ $order->shipping_address }}">
-        </div>
-
         <!-- Дата заказа -->
         <div class="form-group">
             <label for="order_date">Дата заказа:</label>
             <input type="date" class="form-control" id="order_date" name="order_date" value="{{ $order->order_date ? $order->order_date->format('Y-m-d') : '' }}" required>
         </div>
 
+        <!-- Адрес доставки -->
+        <div class="form-group">
+            <label for="shipping_address">Адрес доставки:</label>
+            <input type="text" class="form-control" id="shipping_address" name="shipping_address" value="{{ $order->shipping_address }}">
+        </div>
+
         <!-- Дата доставки -->
         <div class="form-group">
             <label for="delivery_date">Дата доставки:</label>
             <input type="date" class="form-control" id="delivery_date" name="delivery_date" value="{{ $order->delivery_date ? $order->delivery_date->format('Y-m-d') : '' }}">
+        </div>
+
+        <!-- Варианты доставки -->
+        <div class="form-group">
+            <label for="shipping_status">Варианты доставки:</label>
+            <select class="form-control" id="shipping_status" name="shipping_status">
+                <option value="курьером" {{ $order->shipping_status == 'курьером' ? 'selected' : '' }}>Курьером</option>
+                <option value="почтой" {{ $order->shipping_status == 'почтой' ? 'selected' : '' }}>Почтой</option>
+                <option value="самовывоз" {{ $order->shipping_status == 'самовывоз' ? 'selected' : '' }}>Самовывоз</option>
+            </select>
         </div>
 
         <!-- Метод оплаты -->
@@ -69,21 +79,28 @@
             </select>
         </div>
 
-        <!-- Статус доставки -->
-        <div class="form-group">
-            <label for="shipping_status">Доставка:</label>
-            <select class="form-control" id="shipping_status">
-                <option value="курьером" {{ $order->shipping_status == 'курьером' ? 'selected' : '' }}>Курьером</option>
-                <option value="почтой" {{ $order->shipping_status == 'почтой' ? 'selected' : '' }}>Почтой</option>
-                <option value="самовывоз" {{ $order->shipping_status == 'самовывоз' ? 'selected' : '' }}>Самовывоз</option>
-            </select>
-        </div>
-
         <!-- Скидка -->
         <div class="form-group">
             <label for="discount">Скидка:</label>
             <input type="number" class="form-control" id="discount" name="discount" value="{{ $order->discount }}" step="0.01" min="0" max="100">
         </div>
+
+        <!-- Выбор товаров -->
+        <h3>Выберите товары:</h3>
+        @foreach ($products as $product)
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="products[]" value="{{ $product->id }}" {{ in_array($product->id, $orderItems->pluck('product_id')->toArray()) ? 'checked' : '' }}>
+                {{ $product->name }} ({{ $product->price }} $)
+            </label>
+            @php
+            $images = json_decode($product->images, true);
+            @endphp
+            @if(!empty($images))
+            <img src="{{ Storage::url($images[0]) }}" alt="{{ $product->name }}" width="100">
+            @endif
+        </div>
+        @endforeach
 
         <button type="submit" class="btn btn-primary">Обновить заказ</button>
         <a href="{{ route('orders.index') }}" class="btn btn-warning">Назад к списку заказов</a>

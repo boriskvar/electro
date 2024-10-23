@@ -19,9 +19,10 @@
     <table class="table">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Номер заказа</th>
                 <th>Пользователь</th>
-                <th>Общая цена</th>
+                <th>Цена (Σ)</th>
                 <th>Статус</th>
                 <th>Действия</th>
             </tr>
@@ -29,6 +30,7 @@
         <tbody>
             @foreach ($orders as $order)
             <tr>
+                <td>{{ $order->id }}</td>
                 <td>{{ $order->order_number }}</td>
                 <td>{{ $order->user->name }} ({{ $order->user->email }})</td>
                 <td>{{ $order->total_price }}</td>

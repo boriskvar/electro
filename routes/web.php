@@ -62,7 +62,9 @@ Route::prefix('orders')->group(function () {
 });
 
 Route::prefix('order-items')->group(function () {
-    Route::get('/', [OrderItemController::class, 'index'])->name('order-items.index'); // Отображает список всех элементов заказов (READ)
+    //Route::get('/', [OrderItemController::class, 'index'])->name('order-items.index'); // Отображает список всех элементов заказов (READ)
+    Route::get('/orders/{order}', [OrderItemController::class, 'index'])->name('order-items.index'); // Отображает список всех элементов заказа (READ)
+
     Route::get('/create', [OrderItemController::class, 'create'])->name('order-items.create'); // Показывает ФОРМУ для создания нового элемента заказа (CREATE)
     Route::post('/', [OrderItemController::class, 'store'])->name('order-items.store'); // Обрабатывает запрос на создание элемента заказа (CREATE)
     Route::get('/{orderItem}', [OrderItemController::class, 'show'])->name('order-items.show'); // Отображает детали конкретного элемента заказа (READ)

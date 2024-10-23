@@ -9,10 +9,12 @@ use Illuminate\Http\Request;
 
 class OrderItemController extends Controller
 {
-    public function index()
+    public function index(Order $order)
     {
-        $orderItems = OrderItem::all();
-        return view('order_items.index', compact('orderItems'));
+        // Получаем элементы заказа с связанными продуктами
+        $orderItems = $order->orderItems()->with('product')->get();
+
+        return view('order_items.index', compact('order', 'orderItems'));
     }
 
     public function create()
@@ -118,5 +120,4 @@ class OrderItemController extends Controller
             return redirect()->route('order-items.index')->with('error', 'Ошибка при удалении элемента заказа: ' . $e->getMessage());
         }
     }
-
 }

@@ -32,14 +32,15 @@ class CartController extends Controller
         $userId = 1; // Замените на Auth::id() для продакшн-версии
 
         $product = Product::findOrFail($product_id); // Находим товар по ID
-
+        //dd($product->toArray());
         // Валидация входящих данных
         $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
-
+        //dd($request->toArray()); //"quantity" => "1"
         // Проверяем, есть ли товар в корзине
         $cartItem = Cart::where('user_id', $userId)->where('product_id', $product_id)->first();
+        //dd($cartItem); //null
         if ($cartItem) {
             // Если товар уже в корзине, увеличиваем количество
             $cartItem->quantity += $request->input('quantity', 1);
@@ -50,12 +51,21 @@ class CartController extends Controller
             $cartItem->product_id = $product->id;
             $cartItem->quantity = $request->input('quantity', 1);
             $cartItem->price = $product->price;
+            //dd($cartItem->toArray());
         }
-
+        /* 
+array:4 [▼ // app\Http\Controllers\CartController.php:54
+  "user_id" => 1
+  "product_id" => 1
+  "quantity" => "1"
+  "price" => "950.00"
+]
+*/
         // Рассчитываем общую сумму
         $cartItem->total = $cartItem->quantity * $cartItem->price;
+        //dd($cartItem->toArray());
         $cartItem->save();
-
+        //dd($cartItem->toArray());
         return redirect()->route('cart.index')->with('success', 'Товар добавлен в корзину');
     }
 
