@@ -87,16 +87,39 @@
     @else
     <ul>
         @foreach($product->reviews as $review)
-        <li>
-            <strong>{{ $review->author_name }}:</strong>
+        <div class="review">
+            <strong>{{ $review->author_name }}</strong> ({{ $review->rating }} звёзд)
             <p>{{ $review->review_text }}</p>
-            <p>Рейтинг: {{ $review->rating }} / 5</p>
-        </li>
+            <small>Отзыв оставлен {{ $review->created_at->diffForHumans() }}</small>
+
+            @if(auth()->id() === $review->user_id)
+            <!-- Проверка, если пользователь является автором отзыва -->
+            <div>
+                <a href="{{ route('reviews.edit', $review->id) }}" class="btn btn-warning">Редактировать</a>
+                <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+            @endif
+        </div>
         @endforeach
+
     </ul>
     @endif
 
     <a href="{{ route('products.index') }}" class="btn btn-primary">Назад к списку товаров</a>
+
+    <div class="navigation">
+        @if ($previousProduct)
+        <a href="{{ route('products.show', $previousProduct->id) }}" class="btn btn-secondary">← Предыдущий</a>
+        @endif
+
+        @if ($nextProduct)
+        <a href="{{ route('products.show', $nextProduct->id) }}" class="btn btn-secondary">Следующий →</a>
+        @endif
+    </div>
 </div>
 
 @endsection

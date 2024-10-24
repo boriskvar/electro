@@ -31,23 +31,20 @@ class OrderItemController extends Controller
             'product_id' => 'required|exists:products,id', // Проверка существования продукта
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Для одного изображения
         ]);
 
         $data = $request->all();
 
-        // Обработка загрузки изображения
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('order_items', 'public'); // Сохраняем в папку public/storage/order_items
-            $data['image'] = $path; // Сохраняем путь к изображению
-        } else {
-            $data['image'] = null; // Если нет изображения, сохраняем null
-        }
+        // Находим продукт и получаем его изображение
+        $product = Product::findOrFail($data['product_id']);
+        $data['image'] = $product->images; // Предполагается, что это поле с изображением в модели Product
 
+        // Создаем элемент заказа
         OrderItem::create($data);
 
-        return redirect()->route('order-items.index')->with('success', 'Элемент заказа создан успешно.');
+        // Перенаправляем на индекс элементов заказа с указанием ID заказа
+        return redirect()->route('order-items.index', ['order' => $data['order_id']])
+            ->with('success', 'Элемент заказа создан успешно.');
     }
 
     public function show(OrderItem $orderItem)
@@ -55,7 +52,10 @@ class OrderItemController extends Controller
         // Получаем родительский заказ
         $order = $orderItem->order; // Предполагается, что у вас есть отношение 'order' в модели OrderItem
 
-        return view('order_items.show', compact('orderItem', 'order'));
+        // Получаем продукт, связанный с элементом заказа
+        $product = $orderItem->product; // Получаем продукт через связь
+
+        return view('order_items.show', compact('orderItem', 'order', 'product'));
     }
 
     public function edit(OrderItem $orderItem)
@@ -78,46 +78,32 @@ class OrderItemController extends Controller
             'product_id' => 'required|exists:products,id', // Проверка существования продукта
             'quantity' => 'required|integer|min:1',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Валидация для изображения
         ]);
 
         // Обновление данных элемента заказа
         $data = $request->all();
 
-        // Проверка, было ли загружено новое изображение
-        if ($request->hasFile('image')) {
-            // Удаление старого изображения, если оно есть
-            if ($orderItem->image && file_exists(public_path('storage/' . $orderItem->image))) {
-                unlink(public_path('storage/' . $orderItem->image));
-            }
-
-            // Сохранение нового изображения
-            $path = $request->file('image')->store('order_items', 'public');
-            $data['image'] = $path; // Обновление пути изображения
-        }
-
         // Обновление элемента заказа
         $orderItem->update($data);
 
+
         // Перенаправление на страницу списка элементов заказа
-        return redirect()->route('order-items.index')->with('success', 'Элемент заказа обновлен успешно.');
+        return redirect()->route('order-items.index', ['order' => $orderItem->order_id])->with('success', 'Элемент заказа обновлен успешно.');
     }
 
     public function destroy(OrderItem $orderItem)
     {
-        try {
-            // Проверка, если у элемента заказа есть изображение
-            if ($orderItem->image && file_exists(public_path('storage/' . $orderItem->image))) {
-                // Удаление изображения из файловой системы
-                unlink(public_path('storage/' . $orderItem->image));
-            }
+        // Получаем заказ, к которому относится элемент
+        $orderId = $orderItem->order_id; // Инициализируем переменную $orderId
 
+        try {
             // Удаление элемента заказа
             $orderItem->delete();
 
-            return redirect()->route('order-items.index')->with('success', 'Элемент заказа успешно удален.');
+            // Перенаправляем обратно на страницу всех элементов этого заказа
+            return redirect()->route('order-items.index', ['order' => $orderId])->with('success', 'Элемент заказа успешно удален.');
         } catch (\Exception $e) {
-            return redirect()->route('order-items.index')->with('error', 'Ошибка при удалении элемента заказа: ' . $e->getMessage());
+            return redirect()->route('order-items.index', ['order' => $orderId])->with('error', 'Ошибка при удалении элемента заказа: ' . $e->getMessage());
         }
     }
 }

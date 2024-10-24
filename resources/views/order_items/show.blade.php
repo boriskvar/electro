@@ -5,12 +5,21 @@
     <h1>Элементы заказа №{{ $order->order_number }}</h1>
 
     <div class="order-item-details">
-        <p><strong>Продукт:</strong> {{ $orderItem->product->name }}</p>
+        <p><strong>Продукт:</strong> {{ $product->name }}</p>
         <p><strong>Количество:</strong> {{ $orderItem->quantity }}</p>
-        <p><strong>Цена за еденицу:</strong> {{ $orderItem->price }}</p>
+        <p><strong>Цена за единицу:</strong> {{ $orderItem->price }}</p>
         <p><strong>Изображение:</strong></p>
-        @if($orderItem->image)
-        <img src="{{ asset('storage/' . $orderItem->image) }}" alt="Изображение продукта" style="max-width: 200px;">
+        @if ($product && $product->images)
+        @php
+        // Предполагаем, что поле images содержит JSON массив
+        $images = json_decode($product->images, true);
+        $firstImage = $images[0] ?? null;
+        @endphp
+        @if ($firstImage && file_exists(public_path('storage/' . $firstImage)))
+        <img src="{{ asset('storage/' . $firstImage) }}" alt="Изображение товара" style="max-width: 50px;">
+        @else
+        <span>Нет изображения</span>
+        @endif
         @else
         <span>Нет изображения</span>
         @endif
@@ -27,6 +36,6 @@
         <p><strong>Скидка:</strong> {{ $order->discount }}%</p>
     </div>
 
-    <a href="{{ route('order-items.index') }}" class="btn btn-warning">Назад к списку элементов заказа</a>
+    <a href="{{ route('order-items.index', ['order' => $order->id]) }}" class="btn btn-warning">Назад к списку элементов заказа</a>
 </div>
 @endsection

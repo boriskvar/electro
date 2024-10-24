@@ -13,6 +13,8 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ReviewController;
 
 // Маршрут для главной страницы
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -77,8 +79,8 @@ Route::prefix('order-items')->group(function () {
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index'); // Показать содержимое корзины
     Route::post('/add/{product_id}', [CartController::class, 'add'])->name('cart.add'); // Добавить товар в корзину
-    Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
     Route::post('/update/{product_id}', [CartController::class, 'update'])->name('cart.update'); // Обновить количество товара в корзине
+    Route::post('/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove'); // Удалить товар из корзины
 });
 
 // Маршруты для оформления заказа
@@ -88,11 +90,11 @@ Route::prefix('checkout')->group(function () {
 });
 
 
-/*Route::prefix('reviews')->group(function () {
-Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
-Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
-Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
-Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
-});*/
+Route::prefix('reviews')->group(function () {
+    Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
+    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
+    Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
+    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
+});
 
 //Auth::routes();

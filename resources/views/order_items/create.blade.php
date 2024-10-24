@@ -21,7 +21,8 @@
             <select class="form-control" id="product_id" name="product_id" required>
                 <option value="">Выберите товар</option>
                 @foreach ($products as $product)
-                <option value="{{ $product->id }}">{{ $product->name }} (Цена за единицу: {{ $product->price }})</option>
+                <option value="{{ $product->id }}">{{ $product->name }} (Цена за единицу: {{ $product->price }})
+                </option>
                 @endforeach
             </select>
         </div>
@@ -37,7 +38,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Создать объединенный заказ</button>
-        <a href="{{ route('order-items.index') }}" class="btn btn-warning">Назад к списку товаров заказов</a>
+        <a href="{{ route('order-items.index', ['order' => $order->id]) }}" class="btn btn-warning">Назад к списку товаров в заказе</a>
     </form>
 </div>
 @endsection

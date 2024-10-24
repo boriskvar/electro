@@ -28,14 +28,25 @@
         <tbody>
             @foreach ($cartItems as $item)
             <tr>
-                <td><img src="{{ asset('img/' . $item->product->image) }}" alt="{{ $item->product->name }}" width="100"></td>
+                <td>
+                    @php
+                    // Предполагаем, что поле images содержит JSON-массив (Для этого в представлении декодируем JSON-массив и получаем первое изображение)
+                    $images = json_decode($item->product->images, true);
+                    $firstImage = $images[0] ?? null;
+                    @endphp
+                    @if ($firstImage)
+                    <img src="{{ asset('storage/' . $firstImage) }}" alt="{{ $item->product->name }}" width="50">
+                    @else
+                    <p>Изображение недоступно</p>
+                    @endif
+                </td>
                 <td>{{ $item->product->name }} <br> Продавец: {{ $item->product->seller }}</td>
                 <td>{{ $item->price }} ₽</td>
                 <td>
                     <form action="{{ route('cart.update', $item->product->id) }}" method="POST">
                         @csrf
                         <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="100">
-                        <button type="submit" class="btn btn-primary">Обновить</button>
+                        <button type="submit" class="btn btn-primary">Изменить</button>
                     </form>
                 </td>
                 <td>{{ $item->total }} ₽</td>
@@ -52,10 +63,10 @@
 
     <div class="d-flex justify-content-between align-items-center">
         <p><strong>Итого: {{ $cartItems->sum('total') }} ₽</strong></p>
-        <a href="{{ route('checkout') }}" class="btn btn-success">Оформить заказ</a>
+        <a href="{{ route('checkout.index') }}" class="btn btn-success">Оформить заказ</a>
     </div>
 
-    <a href="{{ route('products.index') }}" class="btn btn-secondary mt-3">Продолжить покупки</a>
+    <a href="{{ route('products.index') }}" class="btn btn-warning mt-3">Продолжить покупки</a>
     @endif
 </div>
 @endsection

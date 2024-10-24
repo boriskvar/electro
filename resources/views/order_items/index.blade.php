@@ -1,17 +1,16 @@
 @extends('home')
 
 @section('content')
-
 <div class="container">
     <h1>Список товаров в заказе</h1>
 
-    @if(session('success'))
+    @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
     @endif
 
-    @if(session('error'))
+    @if (session('error'))
     <div class="alert alert-danger">
         {{ session('error') }}
     </div>
@@ -39,12 +38,22 @@
                 <td>{{ $orderItem->quantity }}</td>
                 <td>{{ number_format($orderItem->price, 2, '.', '') }} ₴</td> <!-- Форматирование цены -->
                 <td>
-                    @if($orderItem->image && file_exists(public_path('storage/' . $orderItem->image)))
-                    <img src="{{ asset('storage/' . $orderItem->image) }}" alt="Изображение товара" class="img-fluid" style="max-width: 50px;">
+                    @if ($orderItem->product && $orderItem->product->images)
+                    @php
+                    // Предполагаем, что поле images содержит JSON массив
+                    $images = json_decode($orderItem->product->images, true);
+                    $firstImage = $images[0] ?? null;
+                    @endphp
+                    @if ($firstImage && file_exists(public_path('storage/' . $firstImage)))
+                    <img src="{{ asset('storage/' . $firstImage) }}" alt="Изображение товара" class="img-fluid" style="max-width: 50px;">
+                    @else
+                    <p>Изображение недоступно</p>
+                    @endif
                     @else
                     <p>Изображение недоступно</p>
                     @endif
                 </td>
+
 
                 <td>
                     <a href="{{ route('order-items.show', $orderItem->id) }}" class="btn btn-info">Посмотреть</a>
@@ -60,7 +69,7 @@
         </tbody>
     </table>
 
-    @if($orderItems->isEmpty())
+    @if ($orderItems->isEmpty())
     <div class="alert alert-warning">Нет товаров в заказе.</div> <!-- Сообщение, если нет элементов -->
     @endif
 </div>

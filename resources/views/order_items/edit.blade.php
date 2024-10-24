@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Редактирование элементов заказа</h1>
+    <h1>Редактирование товаров в заказе</h1>
     <form action="{{ route('order-items.update', $orderItem->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -42,17 +42,28 @@
         </div>
 
         <div class="form-group">
-            <label for="image">Изображение:</label>
-            @if ($orderItem->image)
+            <label for="images">Изображение:</label>
+            @if ($orderItem->product && $orderItem->product->images)
+            @php
+            // Предполагаем, что поле images содержит JSON массив
+            $images = json_decode($orderItem->product->images, true);
+            $firstImage = $images[0] ?? null;
+            @endphp
+            @if ($firstImage && file_exists(public_path('storage/' . $firstImage)))
             <div>
-                <img src="{{ asset('storage/' . $orderItem->image) }}" alt="Изображение товара" style="width: 100px; height: auto;">
+                <img src="{{ asset('storage/' . $firstImage) }}" alt="Изображение товара" style="width: 100px; height: auto;">
             </div>
+            @else
+            <p>Изображение недоступно</p>
             @endif
-            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            @else
+            <p>Изображение недоступно</p>
+            @endif
         </div>
 
-        <button type="submit" class="btn btn-primary">Обновить элемент заказа</button>
-        <a href="{{ route('order-items.index') }}" class="btn btn-warning">Назад к списку элементов заказов</a>
+        <button type="submit" class="btn btn-primary">Обновить товары в заказе</button>
+
+        <a href="{{ route('order-items.index', ['order' => $order->id]) }}" class="btn btn-warning">Назад к списку товаров в заказе</a>
     </form>
 </div>
 @endsection

@@ -130,19 +130,21 @@ class ProductController extends Controller
     // Показать один продукт
     public function show(Product $product)
     {
-        //dd($product->images); //"["img/OzxpRcIK9jxYJOuouGZvYqmfzoxsjnM3Ru4rIaQu.png"]"
-        // Загружаем отзывы вместе с продуктом
-        $product->load('reviews'); // Загружаем связанные отзывы
+        //dd($product->toArray());
+        // Получаем предыдущий и следующий продукт
+        $previousProduct = Product::where('id', '<', $product->id)->orderBy('id', 'desc')->first();
+        $nextProduct = Product::where('id', '>', $product->id)->orderBy('id')->first();
 
-        return view('products.show', compact('product'));
+        return view('products.show', compact('product', 'previousProduct', 'nextProduct'));
     }
+
 
     // Показать форму для редактирования продукта
     public function edit(Product $product)
     {
         $categories = Category::all(); // Получаем все категории
         $brands = Brand::all(); // Получаем все бренды (если нужно)
-
+        dd($product);
         return view('products.edit', compact('product', 'categories', 'brands'));
     }
 
@@ -177,15 +179,32 @@ class ProductController extends Controller
         $data = $request->all();
 
         // Преобразуем массивы в JSON
-        $data['colors'] = json_encode($request->colors);
-        $data['sizes'] = json_encode($request->sizes);
+        $data['images'] = json_encode($request->images ?? []);
+        $data['colors'] = json_encode($request->colors ?? []);
+        $data['sizes'] = json_encode($request->sizes ?? []);
 
         // Обработка загрузки изображений
         if ($request->hasFile('images')) {
+            // Удаление старых изображений
+            if (!empty($product->images)) {
+                $oldImages = json_decode($product->images);
+                foreach ($oldImages as $oldImage) {
+                    if (Storage::disk('public')->exists($oldImage)) {
+                        Storage::disk('public')->delete($oldImage); // Удаляем старые изображения
+                    }
+                }
+            }
+
+            // Загрузка новых изображений
             $imagePaths = [];
             foreach ($request->file('images') as $image) {
-                $path = $image->store('img', 'public'); // Сохранение изображения в storage/app/public/img
-                $imagePaths[] = $path; // Сохраняем путь
+                try {
+                    $path = $image->store('img', 'public'); // Сохранение изображения в storage/app/public/img
+                    $imagePaths[] = $path; // Сохраняем путь
+                } catch (\Exception $e) {
+                    // Возвращаем ошибку, если загрузка не удалась
+                    return redirect()->back()->withErrors(['images' => 'Ошибка при загрузке изображения: ' . $e->getMessage()]);
+                }
             }
             $data['images'] = json_encode($imagePaths); // Преобразуем массив путей в JSON
         } else {
@@ -193,10 +212,12 @@ class ProductController extends Controller
         }
 
         // Обновляем продукт
+        dd($product);
         $product->update($data);
 
         return redirect()->route('products.index')->with('success', 'Продукт обновлен успешно');
     }
+
 
     // Удалить продукт
     public function destroy(Product $product)
