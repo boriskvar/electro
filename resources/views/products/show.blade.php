@@ -115,7 +115,7 @@
     </ul>
     @endif
 
-    <a href="{{ route('products.index') }}" class="btn btn-primary">Назад к списку товаров</a>
+    <a href="{{ route('products.index') }}" class="btn btn-warning">Назад к списку товаров</a>
 
 </div>
 

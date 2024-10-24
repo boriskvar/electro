@@ -91,10 +91,12 @@ Route::prefix('checkout')->group(function () {
 
 
 Route::prefix('reviews')->group(function () {
+    Route::get('/', [ReviewController::class, 'index'])->name('reviews.index'); // Показать все отзывы
+    Route::get('/create', [ReviewController::class, 'create'])->name('reviews.create'); // Форма добавления отзыва
     Route::post('/store', [ReviewController::class, 'store'])->name('reviews.store'); // Добавить отзыв
-    Route::get('/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
-    Route::put('/{id}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
-    Route::delete('/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
+    Route::get('/{product}/edit', [ReviewController::class, 'edit'])->name('reviews.edit'); // Редактировать отзыв
+    Route::put('/{product}', [ReviewController::class, 'update'])->name('reviews.update'); // Обновить отзыв
+    Route::delete('/{product}', [ReviewController::class, 'destroy'])->name('reviews.destroy'); // Удалить отзыв
 });
 
 //Auth::routes();

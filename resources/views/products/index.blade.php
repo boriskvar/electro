@@ -25,6 +25,10 @@
                 <td>{{ $product->id }}</td>
                 <td><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></td>
                 <td>
+                    <!-- Кнопка для перехода к отзывам -->
+                    <a href="{{ route('reviews.index', $product->id) }}" class="btn btn-info">Просмотреть отзывы</a>
+                </td>
+                <td>
                     <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">Редактировать</a>
                     <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Вы уверены, что хотите удалить этот товар?');" style="display:inline;">
                         @csrf
