@@ -2,6 +2,8 @@
 
 @section('content')
 {{-- {{ dd($products->toArray()) }} --}}
+<a href="{{ route('cart.index') }}" class="btn btn-success">Перейти в корзину</a>
+
 <div class="container">
     <h1>Список товаров</h1>
     @if(session('success'))

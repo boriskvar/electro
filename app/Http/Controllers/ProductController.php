@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Cart;
 
 class ProductController extends Controller
 {
@@ -130,13 +131,17 @@ class ProductController extends Controller
     // Показать один продукт
     public function show(Product $product)
     {
-        //dd($product->toArray());
-        // Получаем предыдущий и следующий продукт
-        $previousProduct = Product::where('id', '<', $product->id)->orderBy('id', 'desc')->first();
-        $nextProduct = Product::where('id', '>', $product->id)->orderBy('id')->first();
+        // Временно используем временный ID пользователя для тестирования
+        $userId = 1; // Замените на Auth::id() для продакшн-версии
 
-        return view('products.show', compact('product', 'previousProduct', 'nextProduct'));
+        // Получаем количество товара в корзине для текущего пользователя
+        $cartItem = Cart::where('user_id', $userId)->where('product_id', $product->id)->first();
+        $currentQuantity = $cartItem ? $cartItem->quantity : 0; // Если товар в корзине, получаем его количество, иначе 0
+
+        // Передаем продукт и текущее количество в представление
+        return view('products.show', compact('product', 'currentQuantity'));
     }
+
 
 
     // Показать форму для редактирования продукта
@@ -144,7 +149,7 @@ class ProductController extends Controller
     {
         $categories = Category::all(); // Получаем все категории
         $brands = Brand::all(); // Получаем все бренды (если нужно)
-        dd($product);
+        //dd($product);
         return view('products.edit', compact('product', 'categories', 'brands'));
     }
 

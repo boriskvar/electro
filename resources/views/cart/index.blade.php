@@ -4,9 +4,17 @@
 <div class="container">
     <h1>Корзина</h1>
 
+    {{-- Сообщение об успешной операции --}}
     @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
+    </div>
+    @endif
+
+    {{-- Сообщение об ошибке --}}
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
     </div>
     @endif
 
@@ -30,7 +38,7 @@
             <tr>
                 <td>
                     @php
-                    // Предполагаем, что поле images содержит JSON-массив (Для этого в представлении декодируем JSON-массив и получаем первое изображение)
+                    // Получаем изображение продукта из JSON
                     $images = json_decode($item->product->images, true);
                     $firstImage = $images[0] ?? null;
                     @endphp
@@ -41,19 +49,19 @@
                     @endif
                 </td>
                 <td>{{ $item->product->name }} <br> Продавец: {{ $item->product->seller }}</td>
-                <td>{{ $item->price }} ₽</td>
+                <td>{{ number_format($item->price, 2, ',', ' ') }} ₽</td>
                 <td>
                     <form action="{{ route('cart.update', $item->product->id) }}" method="POST">
                         @csrf
-                        <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="100">
-                        <button type="submit" class="btn btn-primary">Изменить</button>
+                        <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="100" class="form-control" style="width: 70px; display: inline;">
+                        <button type="submit" class="btn btn-primary btn-sm">Изменить</button>
                     </form>
                 </td>
-                <td>{{ $item->total }} ₽</td>
+                <td>{{ number_format($item->total, 2, ',', ' ') }} ₽</td>
                 <td>
                     <form action="{{ route('cart.remove', $item->product->id) }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                     </form>
                 </td>
             </tr>
@@ -62,7 +70,7 @@
     </table>
 
     <div class="d-flex justify-content-between align-items-center">
-        <p><strong>Итого: {{ $cartItems->sum('total') }} ₽</strong></p>
+        <p><strong>Итого: {{ number_format($cartItems->sum('total'), 2, ',', ' ') }} ₽</strong></p>
         <a href="{{ route('checkout.index') }}" class="btn btn-success">Оформить заказ</a>
     </div>
 

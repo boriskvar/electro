@@ -7,6 +7,8 @@ use App\Models\Product; // модель товара
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cart;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+
 
 class CartController extends Controller
 {
@@ -60,39 +62,45 @@ class CartController extends Controller
         $cartItem->save();
 
         // Перенаправляем с сообщением об успешном добавлении товара в корзину
-        return redirect()->route('checkout.index')->with('success', 'Товар добавлен в корзину. Перейдите к оформлению заказа.');
+        return redirect()->route('cart.index')->with('success', 'Товар добавлен в корзину.');
     }
-
-
-
 
     // Обновить количество товара в корзине
     public function update($product_id, Request $request)
     {
-        // Получаем ID текущего пользователя
-        $userId = Auth::id();
-        //$userId = 1; // Замените на Auth::id() для продакшн-версии
+        //dd($request->all()); //"quantity" => "3"
 
-        // Находим товар в корзине или возвращаем 404, если не найден
-        try {
-            $cartItem = Cart::where('user_id', $userId)->where('product_id', $product_id)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('cart.index')->with('error', 'Товар не найден в корзине');
+        // Получаем ID текущего пользователя
+        //$userId = Auth::id();
+        $userId = 1; // Замените на Auth::id() для продакшн-версии
+
+
+        // Получаем элемент корзины
+        $cartItem = Cart::where('user_id', $userId)->where('product_id', $product_id)->first();
+        //dd($cartItem->toArray()); // "quantity" => 2
+
+        // Проверяем, существует ли элемент корзины
+        if (!$cartItem) {
+            return redirect()->route('cart.index')->with('error', 'Товар не найден в вашей корзине');
         }
 
         // Валидация входящих данных
-        $request->validate([
-            'quantity' => 'required|integer|min:1', // Обеспечиваем, что количество - это положительное целое число
+        $validatedData = $request->validate([
+            'quantity' => 'required|integer|min:1',
         ]);
+        //dd($validatedData); // Проверяем валидированные данные ["quantity" => "2"]
 
         // Обновляем количество и общую сумму
-        $cartItem->quantity = $request->input('quantity');
+        $cartItem->quantity = $validatedData['quantity'];
         $cartItem->total = $cartItem->quantity * $cartItem->price;
+
+        //dd($cartItem->toArray()); //"quantity" => "2"
+
 
         // Сохраняем изменения в базе данных
         $cartItem->save();
 
-        // Перенаправляем на страницу корзины с сообщением об успешном обновлении
+        // Перенаправляем на страницу корзины с сообщением об успешном обновлении;
         return redirect()->route('cart.index')->with('success', 'Количество товара обновлено');
     }
 

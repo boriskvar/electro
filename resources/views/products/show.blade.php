@@ -75,11 +75,17 @@
         <h3>Добавить в корзину</h3>
         <form action="{{ route('cart.add', $product->id) }}" method="POST">
             @csrf
-            <label for="quantity">Количество:</label>
-            <input type="number" name="quantity" value="1" min="1" max="{{ $product->in_stock }}" class="form-control" style="width: 100px; display: inline-block;">
+            <div class="form-group">
+                <label for="quantity">Количество:</label>
+                <input type="number" name="quantity" value="1" min="1" max="{{ $product->qty }}" class="form-control" required>
+            </div>
             <button type="submit" class="btn btn-primary">Добавить в корзину</button>
         </form>
+
+        <h3>Количество в корзине</h3>
+        <p>{{ $currentQuantity > 0 ? $currentQuantity : 'Товар не добавлен в корзину' }}</p>
     </div>
+    <a href="{{ route('cart.index') }}" class="btn btn-success">Перейти в корзину</a>
 
     <h3>Отзывы</h3>
     @if($product->reviews->isEmpty())
@@ -111,15 +117,6 @@
 
     <a href="{{ route('products.index') }}" class="btn btn-primary">Назад к списку товаров</a>
 
-    <div class="navigation">
-        @if ($previousProduct)
-        <a href="{{ route('products.show', $previousProduct->id) }}" class="btn btn-secondary">← Предыдущий</a>
-        @endif
-
-        @if ($nextProduct)
-        <a href="{{ route('products.show', $nextProduct->id) }}" class="btn btn-secondary">Следующий →</a>
-        @endif
-    </div>
 </div>
 
 @endsection
