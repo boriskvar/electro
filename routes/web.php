@@ -14,10 +14,22 @@ use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ReviewController;
 
 // Маршрут для главной страницы
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Маршруты для работы с меню (CRUD)
+Route::prefix('menus')->group(function () {
+    Route::get('/', [MenuController::class, 'index'])->name('menus.index'); // Отображает список всех категорий (READ)
+    Route::get('/create', [MenuController::class, 'create'])->name('menus.create'); // Показывает форму для добавления новой категории (CREATE)
+    Route::post('/', [MenuController::class, 'store'])->name('menus.store'); // Обрабатывает запрос на создание категории (CREATE)
+    Route::get('/{menu}', [MenuController::class, 'show'])->name('menus.show'); // Отображает детали конкретной категории (READ)
+    Route::get('/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit'); // Показывает форму для редактирования категории (UPDATE)
+    Route::put('/{menu}', [MenuController::class, 'update'])->name('menus.update'); // Обрабатывает запрос на обновление категории (UPDATE)
+    Route::delete('/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy'); // Удаляет категорию (DELETE)
+});
 
 // Маршруты для работы с категориями (CRUD)
 Route::prefix('categories')->group(function () {
